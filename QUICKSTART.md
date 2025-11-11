@@ -1,62 +1,55 @@
 # クイックスタートガイド
 
-empowered-api-specを使って、5分でAPI仕様書を生成する方法を説明します。
+empowered-api-specを使って、既存のOpenAPI仕様書を5分で拡充する方法を説明します。
 
 ## 前提条件
 
 - AIエージェントへのアクセス（ChatGPT、Claude、GitHub Copilotのいずれか）
-- 生成したいAPIの基本情報
+- 既存のOpenAPI仕様書（YAML/JSON形式）
 
 ## ステップバイステップ
 
-### ステップ1: テンプレートを選ぶ（30秒）
+### ステップ1: OpenAPI仕様書を用意（30秒）
 
-用途に応じてテンプレートを選択：
+既存のOpenAPI 3.0仕様書を準備します。
 
-| やりたいこと | 使うテンプレート |
-|------------|----------------|
-| 基本的なAPI仕様書を作りたい | `prompts/templates/basic-api-spec.md` |
-| OpenAPI形式の仕様書を作りたい | `prompts/templates/openapi-spec.md` |
-| 特定のエンドポイントの詳細を書きたい | `prompts/templates/endpoint-detail.md` |
-| エラー処理を定義したい | `prompts/templates/error-handling.md` |
+- Swagger Editorなどで作成済みのもの
+- 既存のAPI開発プロジェクトから生成されたもの
+- 手動で作成したもの
 
-**初めての方は `basic-api-spec.md` から始めることをおすすめします。**
+**OpenAPI仕様書がない場合は、[こちら](#openapi仕様書がない場合)を参照**
 
-### ステップ2: テンプレートをコピー（30秒）
+### ステップ2: メインテンプレートを開く（30秒）
 
+`prompts/templates/openapi-enrichment.md` をブラウザで開きます。
+
+ブラウザで直接見る場合：
+1. [prompts/templates/openapi-enrichment.md](prompts/templates/openapi-enrichment.md) を開く
+2. 「Raw」ボタンをクリックして全文をコピー
+
+またはリポジトリをクローン：
 ```bash
-# GitHubからテンプレートを表示してコピー
-# または、リポジトリをクローンして使用
 git clone https://github.com/pa-y-kunimoto/empowered-api-spec.git
 cd empowered-api-spec
 ```
 
-ブラウザで直接見る場合：
-1. [prompts/templates/](prompts/templates/) を開く
-2. 使いたいテンプレートをクリック
-3. 「Raw」ボタンをクリックして全文をコピー
+### ステップ3: OpenAPI仕様書を埋め込む（1分）
 
-### ステップ3: 情報を記入（2分）
+テキストエディタにテンプレートを貼り付けて、指定箇所にOpenAPI仕様書を貼り付けます。
 
-テキストエディタにテンプレートを貼り付けて、`[...]` の部分を実際の情報に置き換えます。
-
-**例：ユーザー管理APIの場合**
-
-変更前：
+**変更箇所：**
 ```markdown
-- **API名**: [APIの名前を記入]
-- **バージョン**: [バージョン番号を記入]
-```
+## 📦 入力データ
 
-変更後：
-```markdown
-- **API名**: User Management API
-- **バージョン**: v1.0.0
+以下にOpenAPI仕様書をYAMLまたはJSON形式で埋め込んでください。
+
+```yaml
+# ここにあなたのOpenAPI仕様書を貼り付け
 ```
 
 ### ステップ4: AIエージェントに入力（1分）
 
-カスタマイズしたプロンプトをAIエージェントに貼り付けます。
+完成したプロンプトをAIエージェントに貼り付けます。
 
 #### ChatGPT/Claudeの場合：
 1. ブラウザでChatGPT/Claudeを開く
@@ -69,129 +62,149 @@ cd empowered-api-spec
 3. プロンプト全体を入力
 4. Enter
 
-### ステップ5: 結果を確認・保存（1分）
+### ステップ5: 結果を確認・保存（2分）
 
-生成されたAPI仕様書を確認して、必要に応じて修正を依頼します。
+生成された拡充版API仕様書を確認します。
 
-```markdown
-# 例：追加で依頼する場合
-「エラーレスポンスの例をもっと詳しく追加してください」
-「curlコマンドの例を追加してください」
-```
+AIが以下を含む詳細な仕様書を生成します：
+- ✅ API全体概要とユースケース
+- ✅ 各ユースケースでのAPI呼び出し手順
+- ✅ 専門用語の定義
+- ✅ API間の関連性と利用文脈
+- ✅ 実用的なリクエスト/レスポンス例
 
-満足したら、生成された仕様書を保存：
+満足したら保存：
 ```bash
 # Markdownファイルとして保存
-cp api-specification.md docs/
+cp enriched-api-spec.md docs/
 ```
 
 ## 完全な例
 
-### 入力するプロンプト例
+### 入力例
 
-```markdown
-# 基本的なAPI仕様書生成プロンプト
-
-以下の情報に基づいて、詳細なAPI仕様書を生成してください。
-
-## API概要
-- **API名**: Todo Management API
-- **バージョン**: v1.0.0
-- **ベースURL**: https://api.example.com/v1
-- **認証方式**: Bearer Token
-
-## エンドポイント一覧
-
-### エンドポイント1
-- **メソッド**: GET
-- **パス**: /todos
-- **説明**: Todo一覧を取得
-- **リクエストパラメータ**: status (completed/pending), page, limit
-- **レスポンス**: Todoオブジェクトの配列
-
-### エンドポイント2
-- **メソッド**: POST
-- **パス**: /todos
-- **説明**: 新しいTodoを作成
-- **リクエストパラメータ**: なし
-- **レスポンス**: 作成されたTodoオブジェクト
-
-[以下、テンプレートの残りの部分...]
-```
+`prompts/examples/ecommerce-openapi-enrichment.md` を参照してください。
+E-Commerce APIのOpenAPI仕様書を拡充する完全な例です。
 
 ### 期待される出力
 
 AIが以下のような詳細な仕様書を生成します：
 
 ```markdown
-# Todo Management API 仕様書
+# E-Commerce API 仕様書
 
-## 1. 概要
+## 1. API全体概要
 
-Todo Management APIは、タスク管理機能を提供するRESTful APIです...
+### システムの目的
+このAPIは、オンラインショッピングサイトのバックエンド機能を提供し、
+商品閲覧から購入までの一連のフローをサポートします。
 
-## 2. 認証
+### 想定ユースケース
 
-本APIはBearer Token認証を使用します...
+#### ユースケース1: 商品を閲覧する
+1. 商品一覧取得API（GET /items）
+   - カテゴリでフィルタリング可能
+2. 商品詳細取得API（GET /items/{id}）
+   - 一覧で取得したitem_idを使用
 
-Authorization: Bearer YOUR_TOKEN_HERE
+#### ユースケース2: 商品を購入する
+1. ユーザー認証API（POST /auth/login）
+   - アクセストークンを取得
+2. 商品一覧取得API（GET /items）
+3. カート追加API（POST /cart）
+   - 認証トークンが必要
+4. 購入確定API（POST /orders）
+   - 認証トークンが必要
 
-## 3. エンドポイント詳細
+## 2. API詳細仕様
 
-### 3.1 GET /todos - Todo一覧取得
+### ユーザー認証（POST /auth/login）
 
-#### リクエスト
-- Method: GET
-- URL: https://api.example.com/v1/todos
-- Headers:
-  - Authorization: Bearer {token}
-  - Content-Type: application/json
+#### 概要
+ユーザーのメールアドレスとパスワードで認証を行い、
+以降のAPI呼び出しで使用するアクセストークンを取得します。
 
-#### クエリパラメータ
-| パラメータ | 型 | 必須 | デフォルト | 説明 |
-|-----------|-----|------|-----------|------|
-| status | string | No | all | フィルタ条件 |
-| page | integer | No | 1 | ページ番号 |
-| limit | integer | No | 20 | 件数 |
+#### 用語定義
+- **アクセストークン**: 認証済みユーザーのセッションを識別するトークン
+  - カート追加や購入確定など、認証が必要なAPIで使用
+  - 有効期限は24時間
+
+#### リクエスト仕様
+- メソッド: POST
+- エンドポイント: /auth/login
+- リクエストボディ:
+```json
+{
+  "email": "user@example.com",
+  "password": "secure_password"
+}
+```
+
+#### レスポンス仕様
+成功時（200）:
+```json
+{
+  "access_token": "eyJhbGciOiJIUzI1NiIs...",
+  "user_id": "user_123"
+}
+```
+
+#### 関連API・利用手順
+- このAPIで取得した `access_token` を、以降の認証が必要なAPIのAuthorizationヘッダーに設定します
+- `user_id` を使って GET /users/{id} でユーザー情報を取得できます
+- カート追加（POST /cart）や購入確定（POST /orders）の前に必ず実行してください
 
 [以下続く...]
 ```
 
+## OpenAPI仕様書がない場合
+
+OpenAPI仕様書がまだない場合は、以下の手順で作成できます：
+
+### オプション1: OpenAPI仕様書を生成
+1. `prompts/templates/openapi-spec.md` を使用
+2. APIの基本情報とエンドポイント情報を記入
+3. AIに入力してOpenAPI仕様書を生成
+4. 生成されたOpenAPI仕様書を使って `openapi-enrichment.md` で拡充
+
+### オプション2: 直接仕様書を生成
+1. `prompts/templates/basic-api-spec.md` を使用
+2. APIの基本情報を記入
+3. AIに入力して詳細な仕様書を直接生成
+
 ## 次のステップ
 
-- より詳細な仕様が必要な場合は `endpoint-detail.md` を使用
-- OpenAPI形式が必要な場合は `openapi-spec.md` を使用
+- より詳細な説明が必要な特定のエンドポイントがある場合は `endpoint-detail.md` を使用
 - エラー処理を詳しく定義したい場合は `error-handling.md` を使用
+- 生成された仕様書をチームで共有してレビュー
 
 ## よくある質問
 
-### Q: プロンプトが長すぎる場合は？
+### Q: OpenAPI仕様書が不完全な場合は？
 
-A: 複数のエンドポイントがある場合は、以下のいずれかを試してください：
-1. 基本情報だけ先に生成し、後からエンドポイントを追加
-2. エンドポイントごとに `endpoint-detail.md` を使用
-3. エンドポイントをグループ分けして複数回に分けて生成
+A: 不完全でも動作しますが、以下を含めることを推奨します：
+- `paths`: エンドポイントの定義
+- `components/schemas`: データモデルの定義
+- 各エンドポイントの `summary` と `description`
 
 ### Q: AIの出力が思ったものと違う場合は？
 
 A: 追加で指示を出して調整できます：
-- 「もっと詳しく説明してください」
-- 「コード例を追加してください」
-- 「エラーケースを追加してください」
+- 「もっと詳しくユースケースを説明してください」
+- 「API呼び出しの順序をフローチャートで示してください」
+- 「専門用語の定義をもっと追加してください」
 
 ### Q: 生成された仕様書はそのまま使える？
 
 A: 基本的には使えますが、以下を確認することをおすすめします：
-- 技術的な正確性
-- プロジェクト固有の要件との整合性
-- セキュリティ上の考慮事項
+- 業務ドメイン固有の情報の正確性
+- セキュリティ要件との整合性
+- 実際のAPI実装との一致
 
-### Q: チームで共有したい場合は？
+### Q: 英語のOpenAPI仕様書でも使える？
 
-A: 以下の方法があります：
-1. 生成した仕様書をGitリポジトリにコミット
-2. Swagger UIなどのツールでホスト
-3. ドキュメントサイト（Docusaurus、MkDocsなど）に統合
+A: はい、使えます。ただし、生成される仕様書は日本語になります。
+英語の仕様書が必要な場合は、プロンプトに「英語で生成してください」と追加してください。
 
 ## サポート
 
