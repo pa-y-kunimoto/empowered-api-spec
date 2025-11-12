@@ -1,0 +1,366 @@
+# GitHub Copilot Instructions
+
+このリポジトリは、既存のOpenAPI仕様書を拡充し、より詳細で実用的なAPI仕様書を生成するためのプロンプトテンプレート集です。
+
+## GitHub Copilotでの使用方法
+
+### 基本的な使い方
+
+ユーザーがOpenAPI仕様書の拡充を依頼した場合、以下の手順で対応してください：
+
+1. **テンプレートの選択**
+   - メインテンプレート: `prompts/templates/openapi-enrichment.md`
+   - このテンプレートを使用してOpenAPI仕様書を拡充します
+
+2. **プロンプトの構築**
+   - テンプレートの内容を読み込む
+   - ユーザーから提供されたOpenAPI仕様書を埋め込む
+   - 完全なプロンプトを生成する
+
+3. **拡充された仕様書の生成**
+   - 構築したプロンプトを使用してAPI仕様書を生成
+   - 以下の要素を含める：
+     - API全体概要とユースケース
+     - 各ユースケースでのAPI呼び出し手順
+     - 専門用語の定義
+     - API間の関連性
+     - 実用的なリクエスト/レスポンス例
+
+### 生成する仕様書の構成
+
+#### 1. API全体概要
+- システムの目的
+- 想定ユースケース一覧
+- 各ユースケースのAPI呼び出し手順（順序付き）
+
+**例：**
+```
+ユースケース：ユーザーが商品を購入する場合
+1. ユーザー認証API（POST /auth/login）
+2. 商品一覧取得API（GET /items）
+3. カート追加API（POST /cart）
+4. 購入確定API（POST /orders）
+```
+
+#### 2. API詳細仕様（各APIについて）
+
+**フォーマット：**
+```markdown
+### {summary}（{HTTPメソッド} {path}）
+
+#### 概要
+[APIが果たす目的を具体的に説明]
+
+#### 用語定義
+- **用語1**: 定義
+- **用語2**: 定義
+
+#### リクエスト仕様
+- メソッド: [GET/POST/etc]
+- エンドポイント: [path]
+- パラメータ: [詳細]
+
+#### レスポンス仕様
+[成功レスポンスとエラーレスポンスの例]
+
+#### 関連API・利用手順
+[このAPIを呼び出す前後に利用すべきAPI]
+[ID指定APIの場合、IDの取得元を明記]
+```
+
+### 対応パターン
+
+#### パターン1: OpenAPI仕様書の拡充依頼
+**ユーザー入力例：**
+```
+このOpenAPI仕様書をもっと詳しくして
+[OpenAPI YAML/JSON]
+```
+
+**対応：**
+1. `prompts/templates/openapi-enrichment.md` を読み込む
+2. 提供されたOpenAPI仕様書を解析
+3. テンプレートに従って拡充されたOpenAPI仕様書を**OpenAPI Specifications形式（YAML または JSON）**で生成
+4. ユースケース、用語定義、関連APIを`description`フィールドや`x-`拡張フィールドに含める
+
+#### パターン2: 特定のエンドポイントの詳細化
+**ユーザー入力例：**
+```
+GET /users/{id} について詳しく説明して
+```
+
+**対応：**
+1. `prompts/templates/endpoint-detail.md` を参考にする
+2. エンドポイントの詳細仕様を生成
+3. 関連APIとの関係性を明示
+
+#### パターン3: ユースケースベースの説明生成
+**ユーザー入力例：**
+```
+ユーザーが商品を購入する場合のAPI呼び出し手順を教えて
+```
+
+**対応：**
+1. OpenAPI仕様から関連エンドポイントを特定
+2. 手順を順序付きリストで生成
+3. 各ステップでのリクエスト/レスポンス例を含める
+
+### 重要な原則
+
+1. **ユースケース中心**
+   - 単なるAPIリファレンスではなく、実際の使用シーンを重視
+   - APIを「どの順番で」「なぜ」呼び出すかを明確に
+
+2. **用語の明確化**
+   - OpenAPI仕様に登場する専門用語を必ず定義
+   - 業務ドメイン特有の用語も説明
+
+3. **API間の関連性**
+   - 「このAPIで取得したIDを使って次のAPIを呼び出す」などの関係を明記
+   - CRUD操作のライフサイクルを説明
+
+4. **実用的な例**
+   - 具体的なリクエスト/レスポンス例を含める
+   - エラーケースも説明
+
+### テンプレートファイルの参照
+
+このリポジトリには以下のテンプレートがあります：
+
+- **主要テンプレート:**
+  - `prompts/templates/openapi-enrichment.md` - OpenAPI仕様書拡充（最優先）
+
+- **補助テンプレート:**
+  - `prompts/templates/basic-api-spec.md` - 基本的なAPI仕様書生成
+  - `prompts/templates/openapi-spec.md` - OpenAPI仕様書生成
+  - `prompts/templates/endpoint-detail.md` - エンドポイント詳細
+  - `prompts/templates/error-handling.md` - エラーハンドリング
+
+- **使用例:**
+  - `prompts/examples/ecommerce-openapi-enrichment.md` - E-Commerce APIの完全な例
+
+### 出力形式
+
+生成する仕様書は**OpenAPI 3.0形式（YAML または JSON）**で出力すること：
+
+#### 基本構造
+
+元のOpenAPI仕様書を拡充し、以下の要素を追加：
+
+1. **info.description の拡充**
+   - システムの目的
+   - 主要なユースケース
+   - API利用の全体的な流れ
+
+2. **各エンドポイントの description 拡充**
+   - APIが果たす目的の詳細説明
+   - 関連APIとの関係性
+   - 利用手順（前後に呼び出すAPI）
+
+3. **カスタム拡張フィールド（x-）の追加**
+   - `x-use-cases`: ユースケースごとのAPI呼び出し手順
+   - `x-glossary`: 専門用語の定義
+   - `x-related-apis`: 関連するAPI一覧
+   - `x-usage-flow`: 利用フロー説明
+
+4. **parameters と responses の description 充実**
+   - 各パラメータの詳細な説明と例
+   - レスポンスフィールドの意味と用途
+
+#### 出力例
+
+```yaml
+openapi: 3.0.0
+info:
+  title: E-Commerce API
+  version: 1.0.0
+  description: |
+    オンラインショッピングサイトのバックエンドAPI
+    
+    ## システムの目的
+    このAPIは商品閲覧から購入までの一連の機能を提供します。
+    
+    ## 主要なユースケース
+    ### ユースケース1: 商品を購入する
+    1. ユーザー認証（POST /auth/login）
+    2. 商品一覧取得（GET /items）
+    3. カート追加（POST /cart）
+    4. 購入確定（POST /orders）
+    
+  x-glossary:
+    - term: アクセストークン
+      definition: 認証済みユーザーのセッション識別子。有効期限は24時間。
+    - term: SKU
+      definition: Stock Keeping Unit（在庫管理単位）。色・サイズごとに異なる。
+
+paths:
+  /auth/login:
+    post:
+      summary: ユーザー認証
+      description: |
+        ユーザーのメールアドレスとパスワードで認証を行い、
+        アクセストークンを取得します。
+        
+        ### 利用手順
+        - このAPIで取得したアクセストークンを、以降の認証が必要なAPIの
+          Authorizationヘッダーに設定してください
+        - カート追加（POST /cart）や購入確定（POST /orders）の前に
+          必ず実行してください
+      x-related-apis:
+        - GET /users/{id}
+        - POST /cart
+        - POST /orders
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                  description: ユーザーのメールアドレス
+                password:
+                  type: string
+                  format: password
+                  description: ユーザーのパスワード（8文字以上）
+      responses:
+        '200':
+          description: 認証成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  access_token:
+                    type: string
+                    description: |
+                      アクセストークン（JWT形式）
+                      有効期限: 24時間
+                      使用方法: `Authorization: Bearer {token}`
+                  user_id:
+                    type: string
+                    description: |
+                      ユーザーID
+                      このIDを使って GET /users/{id} でユーザー情報を取得可能
+        '401':
+          description: 認証失敗（メールアドレスまたはパスワードが間違っています）
+```
+
+#### Markdown形式のドキュメントが必要な場合
+
+もしMarkdown形式のドキュメントを生成する場合は、以下の構造を使用：
+
+```markdown
+# [API名] 仕様書
+
+## 1. API全体概要
+
+### システムの目的
+[説明]
+
+### 想定ユースケース
+
+#### ユースケース1: [タイトル]
+1. [API名]（[メソッド] [パス]）
+2. [API名]（[メソッド] [パス]）
+
+## 2. API詳細仕様
+
+### [summary]（[メソッド] [パス]）
+
+#### 概要
+[説明]
+
+#### 用語定義
+- **用語**: 定義
+
+#### リクエスト仕様
+[詳細]
+
+#### レスポンス仕様
+[詳細]
+
+#### 関連API・利用手順
+[説明]
+```
+
+**ただし、デフォルトはOpenAPI形式（YAML/JSON）とすること。**
+
+## GitHub Copilot Chat での使用例
+
+### 例1: OpenAPI仕様書の拡充
+```
+User: このOpenAPI仕様書をユースケース中心に拡充してください
+[OpenAPI YAML]
+
+Copilot: prompts/templates/openapi-enrichment.mdのテンプレートに基づいて、
+拡充されたOpenAPI仕様書（YAML形式）を生成します...
+
+```yaml
+openapi: 3.0.0
+info:
+  title: E-Commerce API
+  version: 1.0.0
+  description: |
+    オンラインショッピングサイトのバックエンドAPI
+    
+    ## 主要なユースケース
+    ### ユースケース1: 商品を購入する
+    1. ユーザー認証（POST /auth/login）
+    2. 商品一覧取得（GET /items）
+    3. カート追加（POST /cart）
+    4. 購入確定（POST /orders）
+    
+  x-glossary:
+    - term: アクセストークン
+      definition: 認証済みユーザーのセッション識別子
+    - term: SKU
+      definition: 在庫管理単位（色・サイズごとに異なる）
+
+paths:
+  /auth/login:
+    post:
+      summary: ユーザー認証
+      description: |
+        認証を行いアクセストークンを取得
+        
+        ### 利用手順
+        - 取得したトークンを以降のAPIで使用
+      x-related-apis:
+        - POST /cart
+        - POST /orders
+...
+```
+```
+
+### 例2: 特定のユースケースの説明
+```
+User: 商品購入の手順を教えてください
+
+Copilot: OpenAPI仕様から商品購入に関連するエンドポイントを特定し、
+info.descriptionに追加する形で説明します...
+
+```yaml
+info:
+  description: |
+    ## ユースケース：商品を購入する
+    1. ユーザー認証API（POST /auth/login）
+       - アクセストークンを取得
+    2. 商品一覧取得API（GET /items）
+       - 購入したい商品を検索
+    3. カート追加API（POST /cart）
+       - 商品をカートに追加
+    4. 購入確定API（POST /orders）
+       - 購入を確定
+```
+```
+
+## 注意事項
+
+- OpenAPI仕様書がない場合は、まず仕様書の作成を提案する
+- 不完全なOpenAPI仕様書の場合は、その旨を伝えた上で可能な範囲で拡充
+- **出力形式はデフォルトでOpenAPI 3.0形式（YAML または JSON）とする**
+- 生成する仕様書は日本語を基本とするが、英語が必要な場合は柔軟に対応
+- セキュリティに関わる情報（認証トークンの実際の値など）は含めない

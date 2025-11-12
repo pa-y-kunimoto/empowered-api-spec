@@ -1,0 +1,25 @@
+# Generated files
+*.generated.md
+*.generated.yaml
+*.generated.json
+
+# Temporary files
+*.tmp
+*.temp
+.DS_Store
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Node modules (if using npm packages)
+node_modules/
+
+# Python cache (if using Python tools)
+__pycache__/
+*.pyc
+
+# Output directory
+output/
